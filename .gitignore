@@ -1,45 +1,89 @@
-# Dependencies
-node_modules/
+# Heroku folder (has own git repo for Render deployment)# Dependencies
+
+heroku/node_modules/
+
 npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
 
-# Environment variables
-.env
+# Dependenciesyarn-debug.log*
+
+node_modules/yarn-error.log*
+
+npm-debug.log*
+
+yarn-debug.log*# Environment variables
+
+yarn-error.log*.env
+
 .env.local
+
+# Environment variables.env.development.local
+
+.env.env.test.local
+
+.env.local.env.production.local
+
 .env.development.local
-.env.test.local
-.env.production.local
 
-# OS generated files
-.DS_Store
+.env.test.local# OS generated files
+
+.env.production.local.DS_Store
+
 .DS_Store?
-._*
-.Spotlight-V100
-.Trashes
-ehthumbs.db
-Thumbs.db
 
-# IDE
-.vscode/
+# OS generated files._*
+
+.DS_Store.Spotlight-V100
+
+.DS_Store?.Trashes
+
+._*ehthumbs.db
+
+.Spotlight-V100Thumbs.db
+
+.Trashes
+
+ehthumbs.db# IDE
+
+Thumbs.db.vscode/
+
 .idea/
 
-# Logs
-logs
+# IDE
+
+.vscode/# Logs
+
+.idea/logs
+
 *.log
 
-# Runtime data
-pids
+# Logs
+
+logs# Runtime data
+
+*.logpids
+
 *.pid
-*.seed
-*.pid.lock
 
-# Coverage directory used by tools like istanbul
-coverage/
+# Runtime data*.seed
 
-# Temporary folders
-tmp/
+pids*.pid.lock
+
+*.pid
+
+*.seed# Coverage directory used by tools like istanbul
+
+*.pid.lockcoverage/
+
+
+
+# Coverage directory used by tools like istanbul# Temporary folders
+
+coverage/tmp/
+
 temp/
 
-# Heroku folder (has own git repo)
-heroku/
+# Temporary folders
+
+tmp/# Heroku folder (has own git repo)
+
+temp/heroku/
