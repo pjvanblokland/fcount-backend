@@ -176,8 +176,15 @@ function Model() {
         var language = self.selectedTaal();
         if (language >= 0) {
             localStorage.setItem('language', language);
+            taal = language; // Update globale taal variabele
             self.url("../help/" + self.M_TALEN[language].code + "/index.html?fcount.htm");
+            self.text_OK(alg_OK[language]); // Update text_OK met correcte taal
             zettaal(language);
+        } else {
+            // Fallback naar Engels (index 0) als language < 0
+            taal = 0;
+            self.text_OK(alg_OK[0]);
+            zettaal(0);
         }
     });
 
@@ -193,7 +200,7 @@ function Model() {
         }
     });
 
-    this.text_OK = ko.observable(alg_OK[taal]);
+    this.text_OK = ko.observable(alg_OK[0]); // Start met Engels, wordt later bijgewerkt
     this.contact_internet = ko.observable(-1);
     //-1 vraag om te beginnen //kan alleen bij bestaande code
     //0 new Is deze dataset echt nieuw  en geef niet leeg wachtwoord

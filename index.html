@@ -154,20 +154,33 @@
         url = document.URL;
         var hash;
 
-       var language = parseInt(localStorage.getItem('language'), 10) || 0;
+        var language = parseInt(localStorage.getItem('language'), 10) || 0;
         var q = url.split('?')[1];
         if (q != undefined) {
             q = q.split('&');
             for (let i =  0; i < q.length; i++) {
                 hash = q[i].split('=');
                 if (hash[0] == "language") {
-                    taal = +parseInt(hash[1], 10);
+                    var urlLang = parseInt(hash[1], 10);
+                    if (!isNaN(urlLang) && urlLang >= 0) {
+                        language = urlLang;
+                    }
                 }
                 if (hash[0] == "number") {
                     model.number_code(number);
                 }
             }
         }
+        
+        // Zorg dat language altijd een geldige waarde heeft
+        if (isNaN(language) || language < 0) {
+            language = 0; // Default naar Engels
+        }
+        
+        // Zet de globale taal variabele VOORDAT we selectedTaal instellen
+        taal = language;
+        
+        // Dit triggert automatisch de subscribe functie die zettaal(language) aanroept
         model.selectedTaal(language);
        
         zetgrafiekenlogo();

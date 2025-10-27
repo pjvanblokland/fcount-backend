@@ -44,42 +44,45 @@ const verbetering = ["Do you have any suggestions to improve the performance?", 
 const verbinden_internet = ["Connect to the internet", "Verbindung zum Internet", "İnternete bağlanın", "Verbinden met internet", "Połącz się z Internetem", "Conectarse a internet", "Anslut till internet", "Se connecter à internet", "Подключиться к интернету", "Connettiti a Internet", "连接到互联网", "インターネットに接続する", "Conecte-se à Internet"];
 const view_dataset = ["Graph of all players", "Grafik aller Spieler", "Tüm oyuncuların grafiği", "Grafiek van alle spelers", "Wykres wszystkich graczy", "Gráfico de todos los jugadores.", "Graf över alla spelare", "Graphique de tous les joueurs", "График всех игроков", "Grafico di tutti i giocatori", "所有玩家的图表", "全選手のグラフ", "Gráfico de todos os jogadores"];
 /*|***|*/
-var taal = 0;
+var taal = 0; // Default Engels - geïnitialiseerd met geldige waarde
 
-function zettaal(taal) {
+function zettaal(taalIndex) {
     var hulp;
+    
+    // Update de globale taal variabele
+    taal = taalIndex;
 
-    $(document).prop('title', tel_nauwkeurig[taal]);
+    $(document).prop('title', tel_nauwkeurig[taalIndex]);
     /*|*rest*|*/
-    $(".alg_hoevaak").text(alg_hoevaak[taal]);
-    $(".alg_time").text(alg_time[taal]);
+    $(".alg_hoevaak").text(alg_hoevaak[taalIndex]);
+    $(".alg_time").text(alg_time[taalIndex]);
 
-    $(".numeric_code").text(numeric_code[taal]);
-    $(".alg_OK").text(alg_OK[taal]);
-    $(".howOften").text(howOften[taal]);
-    $(".new_dataset").text(new_dataset[taal]);
-    $(".join_dataset").text(join_dataset[taal]);
-    $(".view_dataset").text(view_dataset[taal]);
-    $(".alg_sluit").text(alg_sluit[taal]);
-    $(".geef_code").text(geef_code[taal]);
-    $(".geef_wachtwoord").text(geef_wachtwoord[taal]);
-    $(".collect_data").text(collect_data[taal]);
-    $(".clear_dataset").text(clear_dataset[taal]);
-    $(".delete_dataset").text(delete_dataset[taal]);
-    $(".alg_wachtwoord").text(alg_wachtwoord[taal]);
-    $(".digits6").text(digits6[taal]);
-    $(".onderdeel_test").text(onderdeel_test[taal]);
-    $(".start_test").text(start_test[taal]);
-    $(".tel_nauwkeurig").text(tel_nauwkeurig[taal]);
-    $(".kies_taal").text(kies_taal[taal]);
-    $(".alg_ok").text(alg_ok[taal]);
-    $(".alg_annuleer").text(alg_annuleer[taal]);
+    $(".numeric_code").text(numeric_code[taalIndex]);
+    $(".alg_OK").text(alg_OK[taalIndex]);
+    $(".howOften").text(howOften[taalIndex]);
+    $(".new_dataset").text(new_dataset[taalIndex]);
+    $(".join_dataset").text(join_dataset[taalIndex]);
+    $(".view_dataset").text(view_dataset[taalIndex]);
+    $(".alg_sluit").text(alg_sluit[taalIndex]);
+    $(".geef_code").text(geef_code[taalIndex]);
+    $(".geef_wachtwoord").text(geef_wachtwoord[taalIndex]);
+    $(".collect_data").text(collect_data[taalIndex]);
+    $(".clear_dataset").text(clear_dataset[taalIndex]);
+    $(".delete_dataset").text(delete_dataset[taalIndex]);
+    $(".alg_wachtwoord").text(alg_wachtwoord[taalIndex]);
+    $(".digits6").text(digits6[taalIndex]);
+    $(".onderdeel_test").text(onderdeel_test[taalIndex]);
+    $(".start_test").text(start_test[taalIndex]);
+    $(".tel_nauwkeurig").text(tel_nauwkeurig[taalIndex]);
+    $(".kies_taal").text(kies_taal[taalIndex]);
+    $(".alg_ok").text(alg_ok[taalIndex]);
+    $(".alg_annuleer").text(alg_annuleer[taalIndex]);
     /*|*rest*|*/
     $("#dialog-internet").dialog({
-        "title": verbinden_internet[taal]
+        "title": verbinden_internet[taalIndex]
     });
     $("#dialog-code").dialog({
-        "title": verbinden_internet[taal]
+        "title": verbinden_internet[taalIndex]
     });
 
 
