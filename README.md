@@ -22,11 +22,11 @@ Dit project gebruikt een gesplitste architectuur voor optimale performance en ko
 - `package.json` - Node.js dependencies
 
 ### Frontend (je website):
-- `frontend/index.html` - Gebruikersinterface
-- `frontend/model.js` - Data model
-- `frontend/vars.js` - Configuratie
-- `frontend/vertaal.js` - Meertalige teksten
-- `frontend/files/` - Assets
+- `fcount/index.html` - Gebruikersinterface
+- `fcount/model.js` - Data model
+- `fcount/vars.js` - Configuratie
+- `fcount/vertaal.js` - Meertalige teksten
+- `fcount/files/` - Assets
 
 ## Deployment
 
@@ -36,8 +36,8 @@ Dit project gebruikt een gesplitste architectuur voor optimale performance en ko
 3. URL: `https://fcount.onrender.com/`
 
 ### Stap 2: Frontend op je website
-1. Upload alle bestanden uit `/frontend/` naar je website
-2. Test de applicatie op je eigen domein
+1. Upload alle bestanden uit `/fcount/` naar je website in een `fcount` folder
+2. Test de applicatie op `jouwdomain.com/fcount/`
 
 ## API Endpoints (Backend)
 

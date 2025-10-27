@@ -123,7 +123,7 @@
                 <input type="number" class="bold" style="width:40px;" data-bind="value:aantalkeer">
             </div>
             <div>
-                <button type="button" onclick="afronden1()" class="butt"><span data-bind="text:text_OK"></span> </button>
+                <button type="button" onclick="afronden()" class="butt"><span data-bind="text:text_OK"></span> </button>
             </div>
 
 
@@ -219,8 +219,8 @@
     $("#openinternet").click(function() {
         $("#dialog-internet").dialog("open");
     })
-    afronden1("fcount")
-    function afronden1() {
+   
+    function afronden() {
         var valid;
         var naamurl;
         if (model.aantalkeer() < 26) {

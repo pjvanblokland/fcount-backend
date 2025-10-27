@@ -1,6 +1,6 @@
 # F-Count Frontend
 
-Deze bestanden moeten op je eigen website geplaatst worden.
+Deze bestanden moeten in een `fcount` folder op je website geplaatst worden.
 
 ## Bestanden:
 - `index.html` - Hoofdpagina van de applicatie
@@ -11,8 +11,20 @@ Deze bestanden moeten op je eigen website geplaatst worden.
 
 ## Setup:
 
-1. **Upload deze bestanden naar je website**
-2. **Zorg dat de URL in `vars.js` naar je Render backend wijst:**
+1. **Upload deze bestanden naar je website in een `fcount` folder**
+   ```
+   jouwdomain.com/fcount/index.html
+   jouwdomain.com/fcount/model.js
+   jouwdomain.com/fcount/vars.js
+   etc.
+   ```
+
+2. **Test de applicatie op:**
+   ```
+   https://jouwdomain.com/fcount/
+   ```
+
+3. **Zorg dat de URL in `vars.js` naar je Render backend wijst:**
    ```javascript
    var heroku="https://fcount.onrender.com/";
    ```
