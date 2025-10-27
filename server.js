@@ -1,42 +1,55 @@
 const express = require('express');
 const cors = require('cors');
-const bodyParser = require('body-parser');
-const path = require('path');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
 // Middleware
 app.use(cors());
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
+app.use(express.json());
 
-// Serve static files
-app.use(express.static(path.join(__dirname)));
+console.log("F-Count Backend Server starting...");
 
-// In-memory data storage (in production, use a database)
-let datasets = {};
+// Data storage - gebaseerd op je heroku implementatie
+var DATASET_LIST = {};
 
-// Helper function to initialize demo dataset
-function initializeDemoData() {
-    if (!datasets['123446']) {
-        datasets['123446'] = {
-            number: '123446',
-            password: '',
-            data: [],
-            created: new Date()
-        };
-    }
-}
+// Dataset constructor - aangepast van je heroku code
+var Dataset = function (id, wachtwoord) {
+    var self = {};
+    self.id = +id;
+    self.wachtwoord = wachtwoord;
+    self.aantallenf = new Array(50).fill(0);
+    self.created = new Date();
+    
+    DATASET_LIST[id] = self;
+    
+    self.verwerk = function (aantalf) {
+        if (aantalf >= 0 && aantalf < 50) {
+            self.aantallenf[aantalf] += 1;
+            console.log('Verwerk F-count:', self.id, 'aantal:', aantalf);
+        }
+    };
+    
+    self.clear = function () {
+        self.aantallenf = new Array(50).fill(0);
+        console.log('Dataset cleared:', self.id);
+    };
+    
+    return self;
+};
 
-// Initialize demo data
-initializeDemoData();
+// Initialize demo dataset
+var demo = new Dataset(123446, '');
 
 // Routes
 
-// Serve the main HTML file
-app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, 'index.html'));
+// Health check
+app.get('/health', (req, res) => {
+    res.json({ 
+        status: 'OK', 
+        timestamp: new Date(),
+        datasets: Object.keys(DATASET_LIST).length 
+    });
 });
 
 // Check if dataset exists
@@ -47,94 +60,33 @@ app.get('/bestaat', (req, res) => {
         return res.status(400).json({ error: 'Number parameter is required' });
     }
     
-    const exists = datasets.hasOwnProperty(nummer);
+    const exists = DATASET_LIST.hasOwnProperty(nummer);
     res.json({ exists });
 });
 
-// More comprehensive exists endpoint with password verification
-app.get('/exists', (req, res) => {
-    const { number, wachtwoord, code } = req.query;
-    
-    if (!number) {
-        return res.status(400).json({ error: 'Number parameter is required' });
-    }
-    
-    const dataset = datasets[number];
-    const exists = !!dataset;
-    
-    let result = { exists };
-    
-    if (exists && wachtwoord !== undefined) {
-        // Check password (remove quotes if present)
-        const cleanPassword = wachtwoord.replace(/"/g, '');
-        result.wachtwoord = dataset.password === cleanPassword;
-        
-        // Handle different operations based on code
-        const codeNum = parseInt(code, 10);
-        
-        if (result.wachtwoord) {
-            switch (codeNum) {
-                case 2: // new dataset
-                    if (!exists) {
-                        datasets[number] = {
-                            number: number,
-                            password: cleanPassword,
-                            data: [],
-                            created: new Date()
-                        };
-                        result.created = true;
-                    }
-                    break;
-                    
-                case 3: // clear dataset
-                    if (exists) {
-                        datasets[number].data = [];
-                        result.cleared = true;
-                    }
-                    break;
-                    
-                case 4: // delete dataset
-                    if (exists && number !== '123446') {
-                        delete datasets[number];
-                        result.deleted = true;
-                    }
-                    break;
-            }
-        }
-    }
-    
-    res.json(result);
-});
-
-// Store F-count data
+// Store F-count data - hoofdfunctie voor je app
 app.get('/geg', (req, res) => {
     const { number, aantalf } = req.query;
     
-    if (!number || !aantalf) {
+    if (!number || aantalf === undefined) {
         return res.status(400).json({ error: 'Number and aantalf parameters are required' });
     }
     
-    // Initialize dataset if it doesn't exist (for demo purposes)
-    if (!datasets[number]) {
-        datasets[number] = {
-            number: number,
-            password: '',
-            data: [],
-            created: new Date()
-        };
+    const dataset = DATASET_LIST[number];
+    if (!dataset) {
+        // Auto-create dataset if it doesn't exist (for demo purposes)
+        new Dataset(number, '');
     }
     
-    // Add the F-count data
-    datasets[number].data.push({
-        count: parseInt(aantalf, 10),
-        timestamp: new Date(),
-        ip: req.ip || 'unknown'
-    });
+    const count = parseInt(aantalf, 10);
+    if (!isNaN(count)) {
+        DATASET_LIST[number].verwerk(count);
+    }
     
     res.json({ 
         success: true, 
         message: 'Data stored successfully',
-        dataCount: datasets[number].data.length 
+        count: count
     });
 });
 
@@ -146,60 +98,98 @@ app.get('/clear', (req, res) => {
         return res.status(400).json({ error: 'Number parameter is required' });
     }
     
-    if (datasets[number]) {
-        datasets[number].data = [];
+    if (DATASET_LIST[number]) {
+        DATASET_LIST[number].clear();
         res.json({ success: true, message: `Dataset ${number} cleared` });
     } else {
         res.status(404).json({ error: 'Dataset not found' });
     }
 });
 
-// Get dataset statistics (for viewing results)
+// Extended exists endpoint for dataset operations
+app.get('/exists', (req, res) => {
+    const { number, wachtwoord, code } = req.query;
+    
+    if (!number) {
+        return res.status(400).json({ error: 'Number parameter is required' });
+    }
+    
+    const dataset = DATASET_LIST[number];
+    const exists = !!dataset;
+    
+    let result = { exists };
+    
+    if (wachtwoord !== undefined) {
+        const cleanPassword = wachtwoord.replace(/"/g, '');
+        result.wachtwoord = exists ? dataset.wachtwoord === cleanPassword : false;
+        
+        const codeNum = parseInt(code, 10);
+        
+        if (result.wachtwoord || number === '123446') {
+            switch (codeNum) {
+                case 2: // new dataset
+                    if (!exists) {
+                        new Dataset(number, cleanPassword);
+                        result.created = true;
+                    }
+                    break;
+                    
+                case 3: // clear dataset
+                    if (exists) {
+                        dataset.clear();
+                        result.cleared = true;
+                    }
+                    break;
+                    
+                case 4: // delete dataset
+                    if (exists && number !== '123446') {
+                        delete DATASET_LIST[number];
+                        result.deleted = true;
+                    }
+                    break;
+            }
+        }
+    }
+    
+    res.json(result);
+});
+
+// Get dataset statistics - voor grafieken
 app.get('/stats', (req, res) => {
     const { dataset, language } = req.query;
     
-    if (!dataset || !datasets[dataset]) {
+    if (!dataset || !DATASET_LIST[dataset]) {
         return res.status(404).json({ error: 'Dataset not found' });
     }
     
-    const data = datasets[dataset].data;
+    const data = DATASET_LIST[dataset];
+    const counts = data.aantallenf;
     
     // Calculate statistics
-    const counts = data.map(entry => entry.count);
-    const total = counts.length;
-    const average = total > 0 ? counts.reduce((a, b) => a + b, 0) / total : 0;
-    const sorted = [...counts].sort((a, b) => a - b);
-    const median = total > 0 ? 
-        (total % 2 === 0 ? 
-            (sorted[total/2 - 1] + sorted[total/2]) / 2 : 
-            sorted[Math.floor(total/2)]) : 0;
-    
-    // Count frequency of each answer
+    let total = 0;
+    let sum = 0;
     const frequency = {};
-    counts.forEach(count => {
-        frequency[count] = (frequency[count] || 0) + 1;
-    });
+    
+    for (let i = 0; i < counts.length; i++) {
+        if (counts[i] > 0) {
+            total += counts[i];
+            sum += i * counts[i];
+            frequency[i] = counts[i];
+        }
+    }
+    
+    const average = total > 0 ? sum / total : 0;
     
     res.json({
         dataset: dataset,
         total: total,
         average: Math.round(average * 100) / 100,
-        median: median,
         frequency: frequency,
-        data: data
+        aantallenf: counts
     });
 });
 
-// Health check endpoint
-app.get('/health', (req, res) => {
-    res.json({ 
-        status: 'OK', 
-        timestamp: new Date(),
-        datasets: Object.keys(datasets).length 
-    });
-});
-
-// Error handling middleware
+// Error handling
 app.use((error, req, res, next) => {
     console.error('Error:', error);
     res.status(500).json({ error: 'Internal server error' });
@@ -211,7 +201,7 @@ app.use((req, res) => {
 });
 
 app.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`);
+    console.log(`F-Count Backend Server running on port ${PORT}`);
     console.log(`Demo dataset 123446 initialized`);
 });
 
