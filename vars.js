@@ -6,7 +6,8 @@ var model=null;
 //var heroku ="https://fcount-amsterdam-2023-12dbb0281a38.herokuapp.com/";
 //var heroku="https://fcount-accurate.glitch.me/";
 // Voor Render deployment - vervang deze URL met je Render service URL
-var heroku="https://fcount.onrender.com/";
+// Gebruik de nieuwe backend service op Render
+var heroku="https://fcount-backend.onrender.com/";
 var numcode=null;
 var url;
 //var starttwee=-2;// Ga kijken of tweede pagina bestaat en ga invullen 
