@@ -3,8 +3,6 @@
 
 <head>
     <meta http-equiv="Content-Type" content="text/html" charset="UTF-8" />
-    <!--<script src="https://cdn.socket.io/socket.io-1.4.5.js"></script>-->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/3.0.4/socket.io.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
     <title>Grafiek</title>
 
@@ -104,8 +102,7 @@
     var aantalkleuren = kleuren.length;
     var aantallenf = new Array(50).fill(0);
     var aantalf = 30;
-    var socket = io();
-     var numcode = "123446"
+    var numcode = "123446"
    
 
     function refresh() {
@@ -124,31 +121,30 @@
                 }
                 if (hash[0] == "language") {
                     taal = +hash[1];
-
-
                 }
             }
         }
-        socket.emit("dataset", {
-            "dataset": numcode
-        })
-        console.log('verbonden ',numcode)
+        
+        // Load data from REST API instead of Socket.IO
+        loadDataset(numcode);
        
         zettaal(taal);
         if (numcode != "123446"){$("#numcode").text('('+numcode+')');}
     }
-    socket.on('verstuur_data', function(data) {
-        aantallenf = data.aantallenf;
-        initGraph3()
-    });
-
-    socket.on("clear",
-        function(data) {
-            console.log('socket clear')
+    
+    function loadDataset(dataset) {
+        $.getJSON('/stats?dataset=' + dataset, function(data) {
+            if (data.aantallenf) {
+                aantallenf = data.aantallenf;
+                initGraph3();
+            }
+        }).fail(function() {
+            console.log('Failed to load dataset:', dataset);
+            // Keep default empty array
             aantallenf = new Array(50).fill(0);
-            change = [];
             initGraph3();
         });
+    }
 
 
     function respondCanvas3() {
