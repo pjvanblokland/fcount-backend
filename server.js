@@ -1,5 +1,6 @@
 const express = require('express');
 const cors = require('cors');
+const path = require('path');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -7,6 +8,9 @@ const PORT = process.env.PORT || 3000;
 // Middleware
 app.use(cors());
 app.use(express.json());
+
+// Serve static files (simple frontend for viewing graphs)
+app.use(express.static(path.join(__dirname)));
 
 console.log("F-Count Backend Server starting...");
 

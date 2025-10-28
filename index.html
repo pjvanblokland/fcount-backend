@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html" charset="UTF-8" />
+    <!--<script src="https://cdn.socket.io/socket.io-1.4.5.js"></script>-->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/3.0.4/socket.io.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+    <title>Grafiek</title>
+
+    <link rel="shortcut icon" type="image/png" href="favicoVU.png">
+    <style>
+        * {
+
+            font-family: arial;
+        }
+
+        body,
+        html {
+            margin: 0;
+            height: 100%;
+            width: 100%;
+            overflow: hidden;
+
+        }
+
+        .screen_container {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            min-height: 100%;
+        }
+
+        .row,
+        .col {
+            overflow: hidden;
+            position: absolute;
+        }
+
+        .row {
+            left: 0;
+            right: 0;
+        }
+
+        .col {
+            top: 0;
+            bottom: 0;
+        }
+
+        .tekst {
+            color: white;
+
+            font-weight: bold;
+            font-size: 22px;
+
+        }
+
+        .tekst1 {
+            color: white;
+
+            font-weight: bold;
+            font-size: 16px;
+            padding: 6px 15px 6px 15px;
+            border-radius: 5px;
+            vertical-align: middle;
+        }
+
+        .header-nav {
+            display: inline-block;
+            vertical-align: middle;
+            height: 50px"
+
+    </style>
+   
+</head>
+
+<body>
+    <div class="screen_container">
+        <header style="background: orange; padding: 16px 16px;">
+            <div class="header-nav">
+                <!-- drie deuren probleem-->
+                <span class="tekst" id="telF"></span>   <span id="numcode" class="tekst"></span>
+            </div>
+        </header>
+
+        <div style="position:absolute;top:60px;bottom:0;left:0;right:0">
+            <canvas id="paintbox3" width="500" height="500"></canvas>
+        </div>
+    </div>
+
+</body>
+
+<script>
+    var model = null;
+    var defaultfont = "20px Arial";
+    var titelfont = "24px Arial";
+    var assenfont = "12px Arial";
+
+    var taal = 0;
+    var minimum = 26,
+        maximum = 45;
+
+    var kleuren = ["#99C1DC", "Red", "Maroon", "Green", "Pink", "Aqua", "Lime", "Fuchsia"];
+    var aantalkleuren = kleuren.length;
+    var aantallenf = new Array(50).fill(0);
+    var aantalf = 30;
+    var socket = io();
+     var numcode = "123446"
+   
+
+    function refresh() {
+        var url = document.URL;
+        console.log(' url  ', url)
+        var hash;
+        var q = url.split('?')[1];
+       
+        if (q != undefined) {
+            q = q.split('&');
+            for (i = 0; i < q.length; i++) {
+                hash = q[i].split('=');
+                if (hash[0] == "dataset") {
+                    numcode = hash[1];
+
+                }
+                if (hash[0] == "language") {
+                    taal = +hash[1];
+
+
+                }
+            }
+        }
+        socket.emit("dataset", {
+            "dataset": numcode
+        })
+        console.log('verbonden ',numcode)
+       
+        zettaal(taal);
+        if (numcode != "123446"){$("#numcode").text('('+numcode+')');}
+    }
+    socket.on('verstuur_data', function(data) {
+        aantallenf = data.aantallenf;
+        initGraph3()
+    });
+
+    socket.on("clear",
+        function(data) {
+            console.log('socket clear')
+            aantallenf = new Array(50).fill(0);
+            change = [];
+            initGraph3();
+        });
+
+
+    function respondCanvas3() {
+        var c3 = $('#paintbox3');
+        var ct3 = c3.get(0).getContext('2d');
+        var container3 = $(c3).parent();
+
+        c3.attr('width', $(container3).width() - 2); //max width
+        c3.attr('height', $(container3).height()); //max height
+
+        //Redraw & reposition content
+        //		draw();
+        var x = c3.width();
+        var y = c3.height();
+        ct3.font = "20px Calibri";
+
+        ct3.fillStyle = "white";
+        ct3.strokeStyle = "black";
+        ct3.fillRect(0, 0, x, y); //fill the canvas
+        if (model) {
+            initGraph3();
+        }
+    }
+
+    $(document).ready(function() {
+        var i;
+        refresh();
+        model = "started";
+        respondCanvas3();
+      
+        $(window).resize(respondCanvas3);
+
+
+
+
+    });
+    var canvas3, context3, assen;
+    var chartLeft3, chartRight3, chartHeight3, chartBottom3, chartTop3 = 50;
+
+    function initsettings3() {
+        "use strict";
+        context3.rect(0, 0, canvas3.width, canvas3.height);
+        context3.fillStyle = "White";
+        context3.fill();
+        context3.beginPath();
+        context3.fillStyle = "Black";
+        chartLeft3 = 50
+        chartRight3 = canvas3.width - 50;
+        chartHeight3 = canvas3.height - 50;
+        chartBottom3 = canvas3.height - 50;
+        context3.save();
+        context3.translate(0.5, 0.5);
+    }
+
+    function initGraph3() {
+        var h, h1, i, j, aantal, left, right;
+        if (model == null) {
+            return;
+        }
+        var breedte, hoogte, i, posx;
+        canvas3 = document.getElementById('paintbox3');
+        context3 = canvas3.getContext('2d');
+
+        maxwaarde = 0;
+        for (i = 0; i < aantallenf.length; i += 1) {
+            getal = aantallenf[i];
+            if (getal > 0) {
+                if (i < minimum) {
+                    minimum = i;
+                }
+                if (i > maximum) {
+                    maximum = i;
+                }
+                if (getal > maxwaarde) {
+                    maxwaarde = getal;
+                }
+            }
+        };
+        if (maxwaarde == 0) {
+            maxwaarde = 1
+        }
+
+        initsettings3();
+        breedte = (chartRight3 - chartLeft3) / (maximum - minimum + 2);
+        context3.strokeStyle = "Black;"
+        hoogte = (chartBottom3 - chartTop3) / maxwaarde;
+        if (hoogte > (breedte - 4)) {
+
+            hoogte = breedte - 4;
+        }
+        context3.beginPath();
+        context3.strokeStyle = "Black";
+        context3.lineWidth = 3;
+        context3.moveTo(chartLeft3, chartBottom3);
+        context3.lineTo(chartRight3, chartBottom3);
+        context3.textAlign = "center"
+        context3.stroke();
+        context3.beginPath();
+        context3.textBaseline = "middle";
+        context3.lineWidth = 1;
+        for (i = 0; i <= maximum - minimum; i += 1) {
+            posx = chartLeft3 + (i + 1) * breedte;
+            aantal = aantallenf[i + minimum]
+            h = aantal * hoogte
+            context3.moveTo(posx, chartBottom3);
+            context3.lineTo(posx, chartBottom3 + 10);
+            context3.textBaseline = "top"
+            context3.fillStyle = "Black";
+            context3.fillText(i + minimum, posx, chartBottom3 + 25);
+            context3.stroke();
+            context3.beginPath();
+            context3.fillStyle = kleuren[i % aantalkleuren];
+            left = posx - breedte / 2 + 2;
+            right = posx + breedte / 2 - 2;
+            context3.rect(posx - breedte / 2 + 2, chartBottom3, breedte - 4, -h)
+            context3.fill();
+            context3.stroke()
+            context3.beginPath();
+            if (aantal > 0) {
+                context3.beginPath()
+                for (j = 1; j < aantal; j += 1) {
+                    context3.moveTo(left, chartBottom3 + j * hoogte)
+                    context3.lineTo(right, chartBottom3 + j * hoogte)
+                }
+                context3.fillStyle = "Black";
+                h1 = Math.floor(aantal / 2) * hoogte + hoogte / 2;
+                context3.fillText(aantallenf[i + minimum], posx, -h1 + chartBottom3);
+                context3.stroke();
+            }
+        }
+        context3.lineWidth = 1;
+        //tekenboxplot();
+        context3.restore();;
+
+
+
+
+
+
+
+
+    }
+
+    function zettaal(taal) {
+        var telF = ["100% inspection    How many F's", "100% Prüfung  Wie viele F's", "% 100 muayene Kaç F", "100% controle  Hoeveel F's", "Kontrola 100%     Ile F's", 'Inspección al 100%. ¿Cuántas "F"?', "100% inspektion Hur många F", "Contrôle à 100    Combien de F", "100% осмотр   Сколько F", "Ispezione al 100%      Quante F", "100%检查多少个F", "100%検査Fの数は？", "100% de inspecçãoQuantos F's"];
+
+        var inspectie100 = ["100% inspection", "100%-Kontrolle", "% 100 muayene", "100% inspectie", "Kontrola 100%", "Inspección al 100%.", "100% inspektion", "Contrôle à 100", "100% осмотр", "Ispezione al 100%", "100%检查", "100％検査", "100% de inspecção"];
+        var grafiek = ["Graph", "Grafik", "Grafik", "Grafiek", "Wykres", "Gráfico", "Diagram", "Graphique", "График", "Grafico", "图形", "グラフ", "Gráfico"];
+        $(document).prop('title', grafiek[taal]);
+        $("#telF").text(inspectie100[taal]);
+
+    }
+
+</script>
+
+
+
+
+</html>
