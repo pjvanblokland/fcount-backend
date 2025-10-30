@@ -156,45 +156,46 @@ function bestaat_nummer_code(nummer, code, dialogs) {
             };
         })
     }
+}
 
-    function Model() {
+function Model() {
 
-        var self = this, i;
-        this.url = ko.observable('help');
-        this.M_TALEN = TALEN;
-        this.selectedTaal = ko.observable(-1);
-        this.selectedTaal.subscribe(function () {
-            taal = self.selectedTaal();
-            if (taal >= 0) {
-                localStorage.setItem('language', taal);
-                self.url("../help/" + self.M_TALEN[taal].code + "/index.html?fcount.htm");
-                zettaal(taal);
+    var self = this, i;
+    this.url = ko.observable('help');
+    this.M_TALEN = TALEN;
+    this.selectedTaal = ko.observable(-1);
+    this.selectedTaal.subscribe(function () {
+        taal = self.selectedTaal();
+        if (taal >= 0) {
+            localStorage.setItem('language', taal);
+            self.url("../help/" + self.M_TALEN[taal].code + "/index.html?fcount.htm");
+            zettaal(taal);
 
-            }
+        }
 
-        });
+    });
 
-        this.aantalkeer = ko.observable(0);
-        this.firstPage = ko.observable(true);
-        this.numcode = ko.observable(123446);
+    this.aantalkeer = ko.observable(0);
+    this.firstPage = ko.observable(true);
+    this.numcode = ko.observable(123446);
 
-        this.nieuwcode = ko.observable("123456");
+    this.nieuwcode = ko.observable("");
 
-        this.nog_insturen = ko.observable(true);
-        this.nog_insturen.subscribe(function () {
-            if (!(self.nog_insturen())) {
-                self.text_OK(view_dataset[taal]);
-            }
-        });
+    this.nog_insturen = ko.observable(true);
+    this.nog_insturen.subscribe(function () {
+        if (!(self.nog_insturen())) {
+            self.text_OK(view_dataset[taal]);
+        }
+    });
 
-        this.text_OK = ko.observable(alg_OK[0]); // Start met Engels, wordt later bijgewerkt
-        this.contact_internet = ko.observable(-1);
-        //-1 vraag om te beginnen //kan alleen bij bestaande code
-        //0 new Is deze dataset echt nieuw  en geef niet leeg wachtwoord
-        //1  //clear bestaat dataset en vraag om wachtwoord en bevestiging
-        //2  //delete dataset dataset en vraag om wachtwoord en bevestiging
-
-
+    this.text_OK = ko.observable(alg_OK[0]); // Start met Engels, wordt later bijgewerkt
+    this.contact_internet = ko.observable(-1);
+    //-1 vraag om te beginnen //kan alleen bij bestaande code
+    //0 new Is deze dataset echt nieuw  en geef niet leeg wachtwoord
+    //1  //clear bestaat dataset en vraag om wachtwoord en bevestiging
+    //2  //delete dataset dataset en vraag om wachtwoord en bevestiging
 
 
-    }
+
+
+}
