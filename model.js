@@ -52,7 +52,7 @@ function testcode() {
 }
 
 function startheroku() {
-    // Direct naar de lokale graph.html file zonder language parameter (gebruikt localStorage)
+    // Direct naar de lokale graph.html 
     url = "heroku/graph.html?dataset=" + model.numcode();
     window.open(url, "_blank");
 }

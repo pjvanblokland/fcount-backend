@@ -7,7 +7,7 @@ function bestaat_nummer_code(nummer, code) {//de actie is ondernomen en wordt ge
     if (nummer == "123446") {
         switch (code) {
             case nieuw:
-                alert(dataset_betaat_al[taal]);
+                alert(dataset_bestaat_al[taal]);
                 break;
             case schoon:
                 if (confirm(vulin(ben_zeker[taal], 123446))) {

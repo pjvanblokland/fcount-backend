@@ -161,12 +161,12 @@
                 modal: true,
                 autoOpen: false
             });
-            model = new Model();
-            ko.applyBindings(model);
+            
+            var language = parseInt(localStorage.getItem('language'), 10) || 0;
+          
             url = document.URL;
             var hash;
 
-            var language = parseInt(localStorage.getItem('language'), 10) || 0;
             var q = url.split('?')[1];
             if (q != undefined) {
                 q = q.split('&');
@@ -183,6 +183,9 @@
                     }
                 }
             }
+            model = new Model();
+            ko.applyBindings(model);
+            model.selectedTaal
 
             // Zorg dat language altijd een geldige waarde heeft
             if (isNaN(language) || language < 0) {
@@ -190,8 +193,7 @@
             }
 
             // Zet de globale taal variabele VOORDAT we selectedTaal instellen
-            taal = language;
-
+           
             // Dit triggert automatisch de subscribe functie die zettaal(language) aanroept
             model.selectedTaal(language);
 
