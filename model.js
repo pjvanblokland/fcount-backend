@@ -133,7 +133,7 @@ function bestaat_nummer_paswoord_code(nummer, wachtwoord, code, dialogs) {
         $.getJSON(naamurl, function (data) {
             console.log('antwoord naamurl ', naamurl, 'data ', data);
             switch (code) {
-                case nieuw: //wachtwoord vereist
+                case nieuw: //wachtwoord niet vereist
                     if (data.exists) { //nieuw
                         alert(vulin(dataset_created, nummer));
                     } else {
@@ -142,7 +142,7 @@ function bestaat_nummer_paswoord_code(nummer, wachtwoord, code, dialogs) {
                     break;
                 case schoon: //clear  wachtwword vereist
                     if (data.exists) {
-                        if (data.wachtwoord) {
+                        if (data.wachtwoord!="") {
                             alert(vulin(made_empty[taal], 123446));
                         } else {
                             alert(invalid_password[taal]);
@@ -153,7 +153,7 @@ function bestaat_nummer_paswoord_code(nummer, wachtwoord, code, dialogs) {
                     break;
                 case verwijder:
                     if (data.exists) {
-                        if (data.wachtwoord) {
+                        if (data.wachtwoord!="") {
                             alert(dataset_verwijderd[taal]);
                         } else {
                             alert(invalid_password[taal]);
@@ -172,26 +172,22 @@ function Model() {
     this.url = ko.observable('help');
     this.M_TALEN = TALEN;
     this.selectedTaal = ko.observable(-1);
-    this.selectedTaal.subscribe(function () {
-        var language = self.selectedTaal();
-        if (language >= 0) {
-            localStorage.setItem('language', language);
-            taal = language; // Update globale taal variabele
-            self.url("../help/" + self.M_TALEN[language].code + "/index.html?fcount.htm");
-            self.text_OK(alg_OK[language]); // Update text_OK met correcte taal
-            zettaal(language);
-        } else {
-            // Fallback naar Engels (index 0) als language < 0
-            taal = 0;
-            self.text_OK(alg_OK[0]);
-            zettaal(0);
+     this.selectedTaal.subscribe(function () {
+        taal = self.selectedTaal();
+        if (taal >= 0) {
+            localStorage.setItem('language', taal);
+            self.url("../help/" + self.M_TALEN[taal].code + "/index.html?fcount.htm");
+            zettaal(taal);
+          
         }
-    });
 
+    });
+   
     this.aantalkeer = ko.observable(0);
     this.firstPage = ko.observable(true);
     this.numcode = ko.observable(123446);
     this.password = ko.observable('');
+    this.nieuwcode=ko.observable("123456");
 
     this.nog_insturen = ko.observable(true);
     this.nog_insturen.subscribe(function () {
