@@ -81,8 +81,8 @@
             <h2> <br><span class='tel_nauwkeurig'></span> &nbsp; <button type="button" onclick="geefhelp()"
                     style="width:30px;font-weight:bolder;border-radius:50%;color:blue" title="Help" id="helpbutton"> ?
                 </button></h2>
-                <h2><span class="ben_je_zeker"></span> <br></h2>
-            <p style="margin-top:20px;margin-bottom:30px"><span class="geef_code"></span> 
+            <h2><span class="ben_je_zeker"></span> <br></h2>
+            <p style="margin-top:20px;margin-bottom:30px"><span class="geef_code"></span>
                 <input type="text" maxlength="6" placeholder="5000" data-bind="value:numcode">
             </p>
 
@@ -202,7 +202,7 @@
                 $("#dialog-code").dialog("open");
             });
             $("#clear1").click(function () {
-               
+
                 if (model.numcode() == 123446) {
                     if (confirm(vulin(ben_zeker[taal], 123466))) {
                         naamurl = heroku + "clear?number=123446";
@@ -213,10 +213,10 @@
                     }
                     return;
                 }
- active_code = schoon;
+                active_code = schoon;
 
 
-                bestaat_nummer_paswoord_code(+model.numcode(), '', schoon);
+                bestaat_nummer_code(+model.numcode(), schoon);
                 return;
 
 
@@ -268,17 +268,12 @@
         }
 
         function ok_dialog() {
-            var hulp = model.password();
-            var hulp = hulp.trim();
-            model.password(hulp);
-            if (hulp == '') {
-                alert(wachtwoord_vereist[taal])
-            } else {
-                hulp = model.numcode();
-                if (testcode(hulp)) {
-                    bestaat_nummer_paswoord_code(hulp, model.password(), active_code);
-                }
+
+            var hulp = model.numcode();
+            if (testcode(hulp)) {
+                bestaat_nummer_code(hulp, active_code);
             }
+
         };
 
         function cancel_dialog() {
@@ -292,13 +287,15 @@
             <button class="statbutton" id="new1"><span class="new_dataset"></span></button>
             <button class="statbutton" onclick="starten(true)"><span class="view_dataset"></span></button><br>
             <button class="statbutton" id="clear1"><span class="clear_dataset"></span></button>
-            <span data-bind="hidden:(+model.numcode()==123446)">
-                <button class="statbutton" id="delete1"><span class="delete_dataset"></span></button>
-            </span>
+
+            <button class="statbutton" id="delete1"><span class="delete_dataset"></span></button>
+
         </div>
         <br>
-        <button onclick="sluitinternet()" class="statbutton hoog" style="background-color:aqua"><span
-                class="alg_sluit"></span></button>
+        <div style="text-align:center;margin-top:10px;">
+            <button onclick="sluitinternet()" class="statbutton hoog" style="background-color:aqua"><span
+                    class="alg_sluit"></span></button>
+        </div>
 
 
     </div>
@@ -307,20 +304,18 @@
         <h2><span id="doel"></span></h2>
         <p> <span class="numeric_code"></span></p>
 
-        <p style="margin-top:20px;margin-bottom:30px"><span class="geef_code"></span> 
+        <p style="margin-top:20px;margin-bottom:30px"><span class="geef_code"></span>
             <input type="text" maxlength="6" placeholder="5000" data-bind="value:nieuwcode">
         </p>
-        <div data-bind="visible:(+model.numcode()!=123446)">
-            <p><span class="geef_wachtwoord"></span> </p>
-            <p><span class="alg_wachtwoord"></span> <input type="password" data-bind="value:password">
-            </p>
+
+       
 
 
-            <button class="statbutton" onclick="cancel_dialog()"><span class="alg_annuleer"></span></button>
-            <button class="statbutton" onclick="ok_dialog()"><span class="alg_ok"></span></button>
+        <button class="statbutton" onclick="cancel_dialog()"><span class="alg_annuleer"></span></button>
+        <button class="statbutton" onclick="ok_dialog()"><span class="alg_ok"></span></button>
 
 
-        </div>
+    </div>
 
 </body>
 
