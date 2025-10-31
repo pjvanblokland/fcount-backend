@@ -57,28 +57,26 @@ function startheroku() {
     window.open(url, "_blank");
 }
 
-function starten(toonheroku) {
-    console.log('starten   ', model.numcode(), toonheroku);
-    if (model.numcode() == "123446") {
+function starten(toonheroku) {//toonheroku=true betekend ga naar grafiek en anders naar de F-test
+//  console.log('starten   ', model.numcode(), toonheroku);
+    if (model.numcode() == "123446") {//je weet zeker dat deze pagina bestat
         if (toonheroku) {
             startheroku();
         } else {
             start_tweedepagina();
         }
     } else {
-        if (testcode()) {
+        if (testcode()) { //is model.numcode() een valide nummer 6 cijfers
             //naamurl = heroku + 'exists?nummer=' + model.numcode()+'&code=0';
             naamurl = heroku + 'bestaat?nummer=' + model.numcode();
             $.getJSON(naamurl, function (data) {
                 if (data.exists) {
-                    if (toonheroku) {
+                    if (toonheroku) {//toon de grafiek
                         startheroku();
-                    } else start_tweedepagina();
+                    } else start_tweedepagina();// ga naar de tekst 
                 } else
-                    alert(vulin(dataset_bestaat_niet[taal], model.numcode()));
-            }
-
-            );
+                    alert(vulin(dataset_bestaat_niet[taal], model.numcode())); //geef waarschuwing want de dataset bestaat niet
+            });
         }
 
     }
