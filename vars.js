@@ -1,14 +1,16 @@
 var model=null;
 
-//var heroku="http://localhost:5000/"
+// ====================================
+// BACKEND CONFIGURATIE - KIES ÉÉN VAN DE TWEE:
+// ====================================
+
+// 🔧 LOKALE ONTWIKKELING - uncomment voor local development:
 //var heroku="http://localhost:3000/";
 
-//gethub https://github.com/pjvanblokland/fcount.git
-//var heroku ="https://fcount-amsterdam-2023-12dbb0281a38.herokuapp.com/";
-//var heroku="https://fcount-accurate.glitch.me/";
-// Voor railway deployment - vervang deze URL met je Render service URL
-// Gebruik de nieuwe backend service op Render
+// 🚀 RAILWAY PRODUCTION - uncomment voor live deployment:
 var heroku="https://fcount-backend-production.up.railway.app/";
+
+// ====================================
 var numcode=null;
 var url;
 //var starttwee=-2;// Ga kijken of tweede pagina bestaat en ga invullen 

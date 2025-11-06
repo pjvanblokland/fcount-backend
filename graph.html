@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html" charset="UTF-8" />
+    <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+    <title>F-Count Graph - Render Backend</title>
+    <style>
+        * {
+            font-family: arial;
+        }
+
+        body,
+        html {
+            margin: 0;
+            height: 100%;
+            width: 100%;
+            overflow: hidden;
+        }
+
+        .screen_container {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            min-height: 100%;
+        }
+
+        .row,
+        .col {
+            overflow: hidden;
+            position: absolute;
+        }
+
+        .row {
+            left: 0;
+            right: 0;
+        }
+
+        .col {
+            top: 0;
+            bottom: 0;
+        }
+
+        .tekst {
+            color: white;
+            font-weight: bold;
+            font-size: 22px;
+        }
+
+        .status {
+            color: lime;
+            font-size: 12px;
+            margin-left: 20px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="screen_container">
+        <header style="background: orange; padding: 16px 16px;">
+            <div>
+                <span class="tekst" id="telF">100% inspection</span>
+                <!--    <span id="numcode" class="tekst"></span>
+                <span class="status">✅ RENDER API CONNECTED</span>
+                <span id="lastUpdate" class="status"></span>-->
+            </div>
+        </header>
+        <div style="position:absolute;top:60px;bottom:0;left:0;right:0">
+            <canvas id="paintbox3" width="500" height="500"></canvas>
+        </div>
+    </div>
+
+    <script>
+        // ====================================
+        // BACKEND CONFIGURATIE - KIES ÉÉN VAN DE TWEE:
+        // ====================================
+
+        // 🔧 LOKALE ONTWIKKELING - uncomment voor local development:
+        //var apiBaseUrl = "http://localhost:3000";
+
+        // 🚀 RAILWAY PRODUCTION - uncomment voor live deployment:
+        var apiBaseUrl = "https://fcount-backend-production.up.railway.app";
+
+        // ====================================
+
+        var currentDataset = "123446";
+        var aantallenf = new Array(50).fill(0);
+        var kleuren = ["#99C1DC", "Red", "Maroon", "Green", "Pink", "Aqua", "Lime", "Fuchsia"];
+        var minimum = 26, maximum = 45;
+
+        // Parse URL parameters
+        function parseURL() {
+            var url = document.URL;
+            var q = url.split('?')[1];
+            if (q != undefined) {
+                q = q.split('&');
+                for (i = 0; i < q.length; i++) {
+                    var hash = q[i].split('=');
+                    if (hash[0] == "dataset") {
+                        currentDataset = decodeURIComponent(hash[1]).replace(/\s.*$/, '');
+                    }
+                }
+            }
+            if (currentDataset != "123446") {
+                $("#numcode").text('(' + currentDataset + ')');
+            }
+        }
+
+        // Load data from Render API
+        function loadDataset() {
+            var apiUrl = apiBaseUrl + '/stats?dataset=' + currentDataset;
+
+            $.getJSON(apiUrl)
+                .done(function (data) {
+                    if (data.aantallenf) {
+                        aantallenf = data.aantallenf;
+                        drawGraph();
+                        $("#lastUpdate").text('Last update: ' + new Date().toLocaleTimeString());
+                    }
+                })
+                .fail(function (xhr, status, error) {
+                    console.log('Failed to load data:', status, error);
+                });
+        }
+
+        // Draw the graph
+        /*
+                 ctx.textBaseline = "top";
+                 // Draw x-axis label
+                 ctx.fillStyle = "black";
+                 ctx.fillText(i + minimum, x, chartBottom + 15);
+ 
+                 // Draw bar
+                 if (count > 0) {
+                     ctx.fillStyle = kleuren[i % kleuren.length];
+                     ctx.fillRect(x - barWidth / 2 + 2, chartBottom, barWidth - 4, -h);
+ 
+                     // Draw count label above bar - much larger font
+                        ctx.beginPath
+                     ctx.fillStyle = "black";
+                     ctx.font = "20px Arial";
+                     ctx.textBaseline = "bottom";
+                     ctx.fillText(count, x, chartBottom - h - 5);
+                 }
+                 ctx.beginPath();
+                 
+ 
+             }
+         }*/
+        function drawGraph() {
+            var canvas = document.getElementById('paintbox3');
+            var ctx = canvas.getContext('2d');
+
+            // Clear canvas
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = "white";
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            // Bereken afmetingen
+            var chartLeft = 50;
+            var chartRight = canvas.width - 50;
+            var chartTop = 50;
+            var chartBottom = canvas.height - 50;
+            var chartHeight = chartBottom - chartTop;
+
+            // Zoek max waarde en bereik
+            var maxValue = 0;
+            minimum = 26; maximum = 45; // reset voor veiligheid
+            for (var i = 0; i < aantallenf.length; i++) {
+                if (aantallenf[i] > 0) {
+                    if (i < minimum) minimum = i;
+                    if (i > maximum) maximum = i;
+                    if (aantallenf[i] > maxValue) maxValue = aantallenf[i];
+                }
+            }
+            if (maxValue == 0) maxValue = 1;
+
+            var barWidth = (chartRight - chartLeft) / (maximum - minimum + 2);
+            var barHeight = chartHeight / maxValue;
+            if (barHeight > (barWidth - 4)) {
+                barHeight = barWidth - 4;
+            }
+
+            // Teken x-as
+            ctx.strokeStyle = "black";
+            ctx.lineWidth = 3;
+            ctx.beginPath();
+            ctx.moveTo(chartLeft, chartBottom);
+            ctx.lineTo(chartRight, chartBottom);
+            ctx.stroke();
+
+            // Stel vaste stijl in
+            ctx.font = "20px Arial";
+            ctx.textAlign = "center";
+
+            for (var i = 0; i <= maximum - minimum; i++) {
+                var x = chartLeft + (i + 1) * barWidth;
+                var count = aantallenf[i + minimum];
+                var h = count * barHeight;
+
+                // Teken tick
+                ctx.beginPath();
+                ctx.moveTo(x, chartBottom);
+                ctx.lineTo(x, chartBottom + 10);
+                ctx.stroke();
+
+                // Teken x-as label
+                ctx.textBaseline = "top";
+                ctx.fillStyle = "black";
+                ctx.fillText(i + minimum, x, chartBottom + 15);
+
+                // Teken balk
+                if (count > 0) {
+                    ctx.fillStyle = kleuren[i % kleuren.length];
+                    ctx.fillRect(x - barWidth / 2 + 2, chartBottom, barWidth - 4, -h);
+
+                    // Teken waarde boven balk
+                    ctx.textBaseline = "bottom";
+                    ctx.fillStyle = "black";
+                    ctx.fillText(count, x, chartBottom - h - 5);
+                }
+            }
+        }
+
+
+
+
+
+
+
+
+
+
+        // Resize canvas
+        function resizeCanvas() {
+            var canvas = $('#paintbox3');
+            var container = canvas.parent();
+            canvas.attr('width', container.width() - 2);
+            canvas.attr('height', container.height());
+            if (aantallenf.some(x => x > 0)) {
+                drawGraph();
+            }
+        }
+
+        // Initialize
+        $(document).ready(function () {
+            // Get language from localStorage (same as main app)
+            var taal = parseInt(localStorage.getItem('language'), 10) || 0;
+            zettaal(taal);
+
+            parseURL();
+            resizeCanvas();
+            loadDataset();
+
+            $(window).resize(resizeCanvas);
+
+            // Auto-refresh every 2 seconds - store interval ID globally
+            window.refreshInterval = setInterval(loadDataset, 2000);
+
+            // Add global stop function
+            window.stopRefresh = function () {
+                if (window.refreshInterval) {
+                    clearInterval(window.refreshInterval);
+                    console.log('Auto-refresh stopped');
+                    window.refreshInterval = null;
+                }
+            };
+
+            // Add global start function
+            window.startRefresh = function () {
+                if (!window.refreshInterval) {
+                    window.refreshInterval = setInterval(loadDataset, 2000);
+                    console.log('Auto-refresh started');
+                }
+            };
+
+            // Add debug function to show all variables
+            window.showDebugInfo = function () {
+                console.log('=== DEBUG INFO ===');
+                console.log('Current dataset:', currentDataset);
+                console.log('API base URL:', apiBaseUrl);
+                console.log('Data array:', aantallenf);
+                console.log('Data summary:', aantallenf.filter(x => x > 0));
+                console.log('Min/Max range:', minimum, 'to', maximum);
+                console.log('Refresh interval ID:', window.refreshInterval);
+                console.log('Last update:', $("#lastUpdate").text());
+                console.log('Canvas size:', $("#paintbox3").width() + 'x' + $("#paintbox3").height());
+                return 'Debug info logged above ↑';
+            };
+        });
+        function zettaal(taal) {
+            var telF = ["100% inspection    How many F's", "100% Prüfung  Wie viele F's", "% 100 muayene Kaç F", "100% controle  Hoeveel F's", "Kontrola 100%     Ile F's", 'Inspección al 100%. ¿Cuántas "F"?', "100% inspektion Hur många F", "Contrôle à 100    Combien de F", "100% осмотр   Сколько F", "Ispezione al 100%      Quante F", "100%检查多少个F", "100%検査Fの数は？", "100% de inspecçãoQuantos F's"];
+
+            var inspectie100 = ["100% inspection", "100%-Kontrolle", "% 100 muayene", "100% inspectie", "Kontrola 100%", "Inspección al 100%.", "100% inspektion", "Contrôle à 100", "100% осмотр", "Ispezione al 100%", "100%检查", "100％検査", "100% de inspecção"];
+            var grafiek = ["Graph", "Grafik", "Grafik", "Grafiek", "Wykres", "Gráfico", "Diagram", "Graphique", "График", "Grafico", "图形", "グラフ", "Gráfico"];
+            $(document).prop('title', grafiek[taal]);
+            $("#telF").text(inspectie100[taal]);
+
+        }
+    </script>
+</body>
+
+</html>
