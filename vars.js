@@ -5,10 +5,10 @@ var model=null;
 // ====================================
 
 // 🔧 LOKALE ONTWIKKELING - uncomment voor local development:
-//var heroku="http://localhost:3000/";
+var heroku="http://localhost:3000/";
 
 // 🚀 RAILWAY PRODUCTION - uncomment voor live deployment:
-var heroku="https://fcount-backend-production.up.railway.app/";
+//var heroku="https://fcount-backend-production.up.railway.app/";
 
 // ====================================
 var numcode=null;

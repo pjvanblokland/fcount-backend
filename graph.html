@@ -76,10 +76,10 @@
         // ====================================
 
         // 🔧 LOKALE ONTWIKKELING - uncomment voor local development:
-        //var apiBaseUrl = "http://localhost:3000";
+        var apiBaseUrl = "http://localhost:3000";
 
         // 🚀 RAILWAY PRODUCTION - uncomment voor live deployment:
-        var apiBaseUrl = "https://fcount-backend-production.up.railway.app";
+        //var apiBaseUrl = "https://fcount-backend-production.up.railway.app";
 
         // ====================================
 
@@ -192,6 +192,8 @@
             // Stel vaste stijl in
             ctx.font = "20px Arial";
             ctx.textAlign = "center";
+               ctx.fillStyle = "black";
+            ctx.fillText('Test wijzigingen', 100, 100);
 
             for (var i = 0; i <= maximum - minimum; i++) {
                 var x = chartLeft + (i + 1) * barWidth;
@@ -205,10 +207,11 @@
                 ctx.stroke();
 
                 // Teken x-as label
-                ctx.textBaseline = "top";
+        
+                  ctx.textBaseline = "top";
                 ctx.fillStyle = "black";
                 ctx.fillText(i + minimum, x, chartBottom + 15);
-
+                ctx.beginPath();
                 // Teken balk
                 if (count > 0) {
                     ctx.fillStyle = kleuren[i % kleuren.length];
@@ -218,6 +221,7 @@
                     ctx.textBaseline = "bottom";
                     ctx.fillStyle = "black";
                     ctx.fillText(count, x, chartBottom - h - 5);
+                    ctx.beginPath();
                 }
             }
         }

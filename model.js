@@ -52,8 +52,8 @@ function testcode() {
 }
 
 function startheroku() {
-    // Direct naar de lokale graph.html 
-    url = "heroku/graph.html?dataset=" + model.numcode();
+    // Direct naar de graph.html in hoofdfolder
+    url = "graph.html?dataset=" + model.numcode();
     window.open(url, "_blank");
 }
 

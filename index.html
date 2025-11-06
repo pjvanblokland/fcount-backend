@@ -18,9 +18,9 @@
         content="Experience the precision demanded by modern production processes. Appreciate the challenge through a seemingly simple task: counting the number of F's in a small text. Explore and automatically collect the results from each student's attempt.">
 
 
-    <!--nieuwe bovenstuk jquery 3.2.1 jqueri-ui 1.13.3 knockout 3.3.4-->
+    <!--jQuery en jQuery UI - compatibele versies-->
     <link rel="stylesheet" href="https://code.jquery.com/ui/1.13.3/themes/ui-lightness/jquery-ui.css">
-    <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://code.jquery.com/ui/1.13.3/jquery-ui.min.js"></script>
 
 
@@ -139,6 +139,15 @@
 
     <script>
         $(document).ready(function () {
+            // Debug: Controleer of jQuery UI geladen is
+            if (typeof $.ui === 'undefined') {
+                console.error('jQuery UI is niet geladen!');
+                alert('jQuery UI is niet geladen. Dialogs werken niet.');
+                return;
+            } else {
+                console.log('jQuery UI versie:', $.ui.version);
+            }
+
             $("#dialog-internet").dialog({
                 resizable: true,
                 height: 300,
